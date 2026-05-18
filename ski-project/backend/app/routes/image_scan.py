@@ -1,10 +1,15 @@
 import base64
 import json
+import os
+import uuid
+from datetime import datetime
 
 import httpx
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 
 from app.core.config import settings
+from app.core.auth import get_current_user
+from app.core.db import scans_collection
 from app.models.product import Product, NutritionFacts
 from app.services.health_score import calculate_health_score
 
@@ -38,6 +43,12 @@ JSON structure (use null for any field not visible):
   "additives_detected": ["list", "of", "any", "visible", "additives"],
   "allergens": ["list", "of", "allergens"],
   "extraction_confidence": "high/medium/low",
+  "healthy_alternatives": [
+    {
+      "name": "healthy alternative food/drink product name",
+      "reason": "short explanation of why this is a healthier option than the scanned product"
+    }
+  ],
   "notes": "anything else relevant or unclear on the label"
 }
 
@@ -45,7 +56,8 @@ Rules:
 - Nutrition values must be per 100g or per 100ml (convert if shown per serving)
 - Sodium: return in g/100g (so 500mg = 0.5)
 - If only serving size values shown, estimate per-100g by dividing accordingly
-- Extract ALL ingredients even if the text is small"""
+- Extract ALL ingredients even if the text is small
+- If the scanned product is unhealthy (e.g. high sugar, high sodium, ultra-processed NOVA group 4, high saturated fat, or many additives), provide 1-2 healthier, commonly available Indian food/drink alternatives in the `healthy_alternatives` array. Otherwise, keep it empty or suggest a simple whole-food alternative."""
 
 
 def _extract_text_from_gemini(payload: dict) -> str:
@@ -117,10 +129,14 @@ async def call_gemini_vision(image_b64: str, media_type: str) -> dict:
 
 
 @router.post("/")
-async def scan_image(file: UploadFile = File(...)):
+async def scan_image(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
     """
     Upload a food label image.
-    Gemini Vision extracts ingredients + nutrition, then we score it.
+    Enforces authentication, saves image locally, extracts data via Gemini,
+    saves the scan in MongoDB, and returns the analyzed product + recommendations.
     """
     # Validate file type
     allowed = {"image/jpeg", "image/png", "image/webp", "image/gif"}
@@ -130,11 +146,22 @@ async def scan_image(file: UploadFile = File(...)):
             detail=f"Unsupported file type: {file.content_type}. Use JPEG, PNG, or WebP."
         )
 
-    # Read and encode image
+    # Read image
     image_bytes = await file.read()
     if len(image_bytes) > 10 * 1024 * 1024:  # 10MB limit
         raise HTTPException(status_code=400, detail="Image too large. Max 10MB.")
 
+    # Save image locally inside backend uploads directory
+    uploads_dir = os.path.join(settings.BASE_DIR, "uploads")
+    os.makedirs(uploads_dir, exist_ok=True)
+    
+    unique_filename = f"{uuid.uuid4().hex}_{file.filename}"
+    file_path = os.path.join(uploads_dir, unique_filename)
+    
+    with open(file_path, "wb") as buffer:
+        buffer.write(image_bytes)
+
+    # Base64 encode for Gemini
     image_b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
 
     # Extract data via Gemini Vision
@@ -143,7 +170,7 @@ async def scan_image(file: UploadFile = File(...)):
     # Build Product model from extracted data
     nutrition_data = extracted.get("nutrition") or {}
     product = Product(
-        barcode=f"image_{file.filename}",
+        barcode=f"image_{unique_filename}",
         name=extracted.get("name") or "Unknown Product",
         brand=extracted.get("brand"),
         ingredients=extracted.get("ingredients"),
@@ -161,14 +188,38 @@ async def scan_image(file: UploadFile = File(...)):
     )
 
     health = calculate_health_score(product)
-
-    return {
-        "source": "image_scan",
-        "filename": file.filename,
-        "extraction_confidence": extracted.get("extraction_confidence", "medium"),
+    
+    # Save the scan history in MongoDB (using nested object format matching client expectations)
+    scan_doc = {
+        "user_email": current_user["email"],
         "product": product.model_dump(),
         "health_score": health.model_dump(),
         "additives_detected": extracted.get("additives_detected", []),
         "allergens": extracted.get("allergens", []),
+        "extraction_confidence": extracted.get("extraction_confidence", "medium"),
+        "healthy_alternatives": extracted.get("healthy_alternatives", []),
         "notes": extracted.get("notes"),
+        "image_url": f"http://localhost:8000/uploads/{unique_filename}",  # Local URL served by static files
+        "scanned_at": datetime.utcnow()
     }
+    
+    await scans_collection.insert_one(scan_doc)
+    
+    # Convert MongoDB _id to string for response
+    scan_doc["_id"] = str(scan_doc["_id"])
+    scan_doc["scanned_at"] = scan_doc["scanned_at"].isoformat()
+    
+    return scan_doc
+
+
+@router.get("/my-scans")
+async def get_my_scans(current_user: dict = Depends(get_current_user)):
+    """Retrieve all historical scans for the currently logged-in user, sorted newest first."""
+    cursor = scans_collection.find({"user_email": current_user["email"]}).sort("scanned_at", -1)
+    scans = []
+    async for doc in cursor:
+        doc["_id"] = str(doc["_id"])
+        if "scanned_at" in doc and isinstance(doc["scanned_at"], datetime):
+            doc["scanned_at"] = doc["scanned_at"].isoformat()
+        scans.append(doc)
+    return scans

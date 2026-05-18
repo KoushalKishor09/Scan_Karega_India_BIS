@@ -1,7 +1,9 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
-from app.routes import scan, products, health_score, image_scan
+from app.routes import scan, products, health_score, image_scan, auth
 
 app = FastAPI(
     title="SKI — Scan Karega India API",
@@ -17,6 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount local uploads folder for static serving
+uploads_dir = settings.BASE_DIR / "uploads"
+os.makedirs(uploads_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
+app.include_router(auth.router,         prefix="/api/auth",         tags=["Authentication"])
 app.include_router(scan.router,         prefix="/api/scan",         tags=["Scan"])
 app.include_router(products.router,     prefix="/api/products",     tags=["Products"])
 app.include_router(health_score.router, prefix="/api/health-score", tags=["Health Score"])

@@ -70,7 +70,7 @@ function NutritionRow({ label, value, unit, highlight }) {
 
 // ── Main component ───────────────────────────────────────────────────────────
 
-export default function ImageUpload() {
+export default function ImageUpload({ token, onScanSuccess }) {
   const [dragOver, setDragOver]     = useState(false);
   const [preview, setPreview]       = useState(null);   // data URL
   const [file, setFile]             = useState(null);
@@ -115,8 +115,14 @@ export default function ImageUpload() {
       const form = new FormData();
       form.append("file", file);
 
+      const headers = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`${API_URL}/api/image-scan/`, {
         method: "POST",
+        headers: headers,
         body: form,
       });
 
@@ -131,6 +137,9 @@ export default function ImageUpload() {
       const data = await res.json();
       setResult(data);
       setStatus("done");
+      if (onScanSuccess) {
+        onScanSuccess(data);
+      }
     } catch (err) {
       clearInterval(ticker);
       setError(err.message);
@@ -333,8 +342,37 @@ export default function ImageUpload() {
 
           {/* Notes from Claude */}
           {result.notes && (
-            <div style={{ background: "var(--color-background-secondary)", borderRadius: 10, padding: "10px 14px", fontSize: 12, color: "var(--color-text-secondary)", fontStyle: "italic" }}>
+            <div style={{ background: "var(--color-background-secondary)", borderRadius: 10, padding: "10px 14px", fontSize: 12, color: "var(--color-text-secondary)", fontStyle: "italic", marginBottom: 12 }}>
               Note: {result.notes}
+            </div>
+          )}
+
+          {/* Healthy alternatives */}
+          {result.healthy_alternatives?.length > 0 && (
+            <div style={{ background: "#f0fdf4", border: "1px solid #bcf0da", borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 500, letterSpacing: "0.07em", textTransform: "uppercase", color: "#15803d", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                  <path d="M9 18h6"/>
+                  <path d="M10 22h4"/>
+                </svg>
+                Healthy Alternatives Recommended
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {result.healthy_alternatives.map((alt, i) => (
+                  <div key={i} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 8, padding: 10 }}>
+                    <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 13, display: "flex", alignItems: "center" }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", color: "var(--color-primary)", marginRight: 6 }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                      </span>
+                      {alt.name}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#64748b", marginTop: 4, lineHeight: 1.5 }}>{alt.reason}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
