@@ -11,7 +11,7 @@ load_dotenv(BASE_DIR / ".env", override=True)
 
 def _parse_origins(raw_value: str) -> list[str]:
     if not raw_value:
-        return ["http://localhost:5173", "http://localhost:3000"]
+        return ["http://localhost:5173", "http://localhost:3000", "https://scan-karega-india-bis.vercel.app"]
 
     try:
         parsed = json.loads(raw_value)
@@ -27,6 +27,8 @@ class Settings:
     def __init__(self) -> None:
         self.BASE_DIR = BASE_DIR
         self.ALLOWED_ORIGINS = _parse_origins(os.getenv("ALLOWED_ORIGINS", ""))
+        self.BACKEND_URL = os.getenv("BACKEND_URL", "")
+        self.FRONTEND_URL = os.getenv("FRONTEND_URL", "https://scan-karega-india-bis.vercel.app")
         self.ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
         self.GEMINI_API_KEY = (
             os.getenv("GEMINI_API_KEY", "")

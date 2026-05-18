@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 
 import httpx
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Request
 
 from app.core.config import settings
 from app.core.auth import get_current_user
@@ -130,6 +130,7 @@ async def call_gemini_vision(image_b64: str, media_type: str) -> dict:
 
 @router.post("/")
 async def scan_image(
+    request: Request,
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
@@ -199,7 +200,7 @@ async def scan_image(
         "extraction_confidence": extracted.get("extraction_confidence", "medium"),
         "healthy_alternatives": extracted.get("healthy_alternatives", []),
         "notes": extracted.get("notes"),
-        "image_url": f"http://localhost:8000/uploads/{unique_filename}",  # Local URL served by static files
+        "image_url": f"{settings.BACKEND_URL.rstrip('/')}/uploads/{unique_filename}" if settings.BACKEND_URL else f"{str(request.base_url).rstrip('/')}/uploads/{unique_filename}",
         "scanned_at": datetime.utcnow()
     }
     

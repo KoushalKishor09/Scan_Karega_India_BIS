@@ -9,7 +9,7 @@ from datetime import datetime
 router = APIRouter()
 
 # Front-end dashboard URL to redirect back to after login
-FRONTEND_DASHBOARD_URL = "http://localhost:5173"
+FRONTEND_DASHBOARD_URL = settings.FRONTEND_URL
 
 @router.get("/google/login")
 async def google_login():
