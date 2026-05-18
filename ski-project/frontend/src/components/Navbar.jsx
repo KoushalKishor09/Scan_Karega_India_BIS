@@ -40,10 +40,7 @@ export default function Navbar({
         {/* Logo / Brand */}
         <div className="nav-logo" onClick={handleHomeClick}>
           <img src={logoImg} alt="Scan Karega India Logo" className="logo-brand-img" />
-          <div className="logo-text">
-            <span className="logo-title">Scan Karega India</span>
-            <span className="logo-subtitle">Healthy Banega India</span>
-          </div>
+          <span className="logo-title">Scan Karega India</span>
         </div>
 
         {/* Desktop Menu */}

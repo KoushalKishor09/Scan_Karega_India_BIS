@@ -3,6 +3,16 @@ import React, { useState } from "react";
 export default function Home({ onLoginClick, user, onScanClick }) {
   const [activeTab, setActiveTab] = useState("unhealthy"); // "unhealthy" or "healthy"
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [mobileCardIndex, setMobileCardIndex] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 768;
 
   const sampleProducts = [
     {
@@ -91,12 +101,6 @@ export default function Home({ onLoginClick, user, onScanClick }) {
       {/* Hero Section */}
       <header className="hero-section">
         <div className="hero-content animate-slide-up">
-          <div className="hero-badge animate-float">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginRight: 6 }}>
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            Healthy Banega India
-          </div>
           <h1 className="hero-title">
             Know What You Eat.<br />
             Instant <span className="text-gradient">Food Label Scans</span>.
@@ -105,7 +109,7 @@ export default function Home({ onLoginClick, user, onScanClick }) {
             Upload any packaged food or drink label. Our AI-powered scanner extracts exact ingredients, evaluates nutritional processing quality, and recommends healthier, clean local Indian alternatives instantly.
           </p>
           <div className="hero-buttons">
-            <button className="btn-primary" onClick={onLoginClick}>
+            <button className="btn-primary" onClick={user ? onScanClick : onLoginClick}>
               Start Scanner Now
             </button>
             <a href="#about" className="btn-secondary">
@@ -320,76 +324,163 @@ export default function Home({ onLoginClick, user, onScanClick }) {
         <div className="gallery-filter-tabs" style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "12px", marginBottom: "40px" }}>
           <button 
             className={`gallery-filter-btn ${selectedFilter === "all" ? "active" : ""}`}
-            onClick={() => setSelectedFilter("all")}
+            onClick={() => { setSelectedFilter("all"); setMobileCardIndex(0); }}
           >
             All Products
           </button>
           <button 
             className={`gallery-filter-btn ${selectedFilter === "unhealthy" ? "active-danger" : ""}`}
-            onClick={() => setSelectedFilter("unhealthy")}
+            onClick={() => { setSelectedFilter("unhealthy"); setMobileCardIndex(0); }}
           >
             ⚠️ High Chemical (Avoid)
           </button>
           <button 
             className={`gallery-filter-btn ${selectedFilter === "healthy" ? "active-success" : ""}`}
-            onClick={() => setSelectedFilter("healthy")}
+            onClick={() => { setSelectedFilter("healthy"); setMobileCardIndex(0); }}
           >
             ✅ Clean Alternatives (Choose)
           </button>
         </div>
 
         {/* Gallery Cards Grid */}
-        <div className="gallery-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px" }}>
-          {filteredProducts.map(p => (
-            <div key={p.id} className={`glass-card gallery-product-card ${p.isHealthy ? "border-healthy" : "border-unhealthy"}`} style={{ display: "flex", flexDirection: "column", padding: "28px", position: "relative", gap: "16px", transition: "transform 0.3s" }}>
-              <div className="gallery-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
-                <div>
-                  <span className="gallery-card-brand" style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>{p.brand}</span>
-                  <h3 className="gallery-card-name" style={{ fontFamily: "var(--font-heading)", fontSize: "18px", fontWeight: "800", color: "var(--color-text-primary)", margin: "4px 0 0 0" }}>{p.name}</h3>
+        {/* Gallery Cards Desktop Grid */}
+        <div className="gallery-desktop-view">
+          <div className="gallery-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px" }}>
+            {filteredProducts.map(p => (
+              <div key={p.id} className={`glass-card gallery-product-card ${p.isHealthy ? "border-healthy" : "border-unhealthy"}`} style={{ display: "flex", flexDirection: "column", padding: "28px", position: "relative", gap: "16px", transition: "transform 0.3s" }}>
+                <div className="gallery-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
+                  <div>
+                    <span className="gallery-card-brand" style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>{p.brand}</span>
+                    <h3 className="gallery-card-name" style={{ fontFamily: "var(--font-heading)", fontSize: "18px", fontWeight: "800", color: "var(--color-text-primary)", margin: "4px 0 0 0" }}>{p.name}</h3>
+                  </div>
+                  <div className={`gallery-score-badge ${p.isHealthy ? "bg-score-healthy" : "bg-score-unhealthy"}`} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "56px", height: "56px", borderRadius: "50%" }}>
+                    <span style={{ fontSize: "18px", fontWeight: "900", color: p.isHealthy ? "var(--color-primary-dark)" : "#ef4444", lineHeight: "1" }}>{p.score}</span>
+                    <span style={{ fontSize: "7px", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.04em", color: p.isHealthy ? "var(--color-primary-dark)" : "#ef4444" }}>Score</span>
+                  </div>
                 </div>
-                <div className={`gallery-score-badge ${p.isHealthy ? "bg-score-healthy" : "bg-score-unhealthy"}`} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "56px", height: "56px", borderRadius: "50%" }}>
-                  <span style={{ fontSize: "18px", fontWeight: "900", color: p.isHealthy ? "var(--color-primary-dark)" : "#ef4444", lineHeight: "1" }}>{p.score}</span>
-                  <span style={{ fontSize: "7px", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.04em", color: p.isHealthy ? "var(--color-primary-dark)" : "#ef4444" }}>Score</span>
-                </div>
-              </div>
 
-              <div className="gallery-card-meta">
-                <span className={`gallery-nova-tag ${p.isHealthy ? "nova-clean" : "nova-toxic"}`} style={{ fontSize: "10px", fontWeight: "800", padding: "4px 10px", borderRadius: "20px" }}>
-                  NOVA {p.nova}
-                </span>
-              </div>
-
-              <div className="gallery-ingredients-box" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <span style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>Detected Ingredients:</span>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                  {p.ingredients.map((ing, i) => (
-                    <span key={i} className="gallery-ing-tag" style={{ fontSize: "10px", fontWeight: "700", padding: "4px 8px", borderRadius: "6px", background: "var(--color-background-secondary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-secondary)" }}>
-                      {ing}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className={`gallery-verdict-box ${p.isHealthy ? "verdict-box-success" : "verdict-box-danger"}`} style={{ fontSize: "12px", padding: "12px", borderRadius: "12px", marginTop: "auto", border: "1px solid" }}>
-                <strong>Verdict:</strong> {p.warning}
-              </div>
-
-              {!p.isHealthy && (
-                <div className="gallery-recommendation-box" style={{ borderTop: "1px solid var(--color-border-secondary)", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <span style={{ fontSize: "9px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>Recommended Clean Alternative:</span>
-                  <span 
-                    style={{ fontSize: "12px", fontWeight: "800", color: "var(--color-primary-dark)", cursor: "pointer", textDecoration: "underline" }}
-                    onClick={() => {
-                      setSelectedFilter("healthy");
-                      window.scrollTo({ top: document.querySelector(".sample-gallery-section").offsetTop - 80, behavior: "smooth" });
-                    }}
-                  >
-                    🥤 {p.alternative}
+                <div className="gallery-card-meta">
+                  <span className={`gallery-nova-tag ${p.isHealthy ? "nova-clean" : "nova-toxic"}`} style={{ fontSize: "10px", fontWeight: "800", padding: "4px 10px", borderRadius: "20px" }}>
+                    NOVA {p.nova}
                   </span>
                 </div>
-              )}
+
+                <div className="gallery-ingredients-box" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <span style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>Detected Ingredients:</span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {p.ingredients.map((ing, i) => (
+                      <span key={i} className="gallery-ing-tag" style={{ fontSize: "10px", fontWeight: "700", padding: "4px 8px", borderRadius: "6px", background: "var(--color-background-secondary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-secondary)" }}>
+                        {ing}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={`gallery-verdict-box ${p.isHealthy ? "verdict-box-success" : "verdict-box-danger"}`} style={{ fontSize: "12px", padding: "12px", borderRadius: "12px", marginTop: "auto", border: "1px solid" }}>
+                  <strong>Verdict:</strong> {p.warning}
+                </div>
+
+                {!p.isHealthy && (
+                  <div className="gallery-recommendation-box" style={{ borderTop: "1px solid var(--color-border-secondary)", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span style={{ fontSize: "9px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>Recommended Clean Alternative:</span>
+                    <span 
+                      style={{ fontSize: "12px", fontWeight: "800", color: "var(--color-primary-dark)", cursor: "pointer", textDecoration: "underline" }}
+                      onClick={() => {
+                        setSelectedFilter("healthy");
+                        window.scrollTo({ top: document.querySelector(".sample-gallery-section").offsetTop - 80, behavior: "smooth" });
+                      }}
+                    >
+                      🥤 {p.alternative}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Gallery Cards Mobile Carousel (Single Card View) */}
+        <div className="gallery-mobile-view">
+          {filteredProducts.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {(() => {
+                const p = filteredProducts[mobileCardIndex % filteredProducts.length] || filteredProducts[0];
+                if (!p) return null;
+                return (
+                  <div className={`glass-card gallery-product-card ${p.isHealthy ? "border-healthy" : "border-unhealthy"}`} style={{ display: "flex", flexDirection: "column", padding: "24px", position: "relative", gap: "16px" }}>
+                    <div className="gallery-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
+                      <div>
+                        <span className="gallery-card-brand" style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>{p.brand}</span>
+                        <h3 className="gallery-card-name" style={{ fontFamily: "var(--font-heading)", fontSize: "18px", fontWeight: "800", color: "var(--color-text-primary)", margin: "4px 0 0 0" }}>{p.name}</h3>
+                      </div>
+                      <div className={`gallery-score-badge ${p.isHealthy ? "bg-score-healthy" : "bg-score-unhealthy"}`} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "56px", height: "56px", borderRadius: "50%" }}>
+                        <span style={{ fontSize: "18px", fontWeight: "900", color: p.isHealthy ? "var(--color-primary-dark)" : "#ef4444", lineHeight: "1" }}>{p.score}</span>
+                        <span style={{ fontSize: "7px", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.04em", color: p.isHealthy ? "var(--color-primary-dark)" : "#ef4444" }}>Score</span>
+                      </div>
+                    </div>
+
+                    <div className="gallery-card-meta">
+                      <span className={`gallery-nova-tag ${p.isHealthy ? "nova-clean" : "nova-toxic"}`} style={{ fontSize: "10px", fontWeight: "800", padding: "4px 10px", borderRadius: "20px" }}>
+                        NOVA {p.nova}
+                      </span>
+                    </div>
+
+                    <div className="gallery-ingredients-box" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <span style={{ fontSize: "10px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>Detected Ingredients:</span>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                        {p.ingredients.map((ing, i) => (
+                          <span key={i} className="gallery-ing-tag" style={{ fontSize: "10px", fontWeight: "700", padding: "4px 8px", borderRadius: "6px", background: "var(--color-background-secondary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-secondary)" }}>
+                            {ing}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={`gallery-verdict-box ${p.isHealthy ? "verdict-box-success" : "verdict-box-danger"}`} style={{ fontSize: "12px", padding: "12px", borderRadius: "12px", border: "1px solid" }}>
+                      <strong>Verdict:</strong> {p.warning}
+                    </div>
+
+                    {!p.isHealthy && (
+                      <div className="gallery-recommendation-box" style={{ borderTop: "1px solid var(--color-border-secondary)", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <span style={{ fontSize: "9px", fontWeight: "800", textTransform: "uppercase", color: "var(--color-text-tertiary)" }}>Recommended Clean Alternative:</span>
+                        <span 
+                          style={{ fontSize: "12px", fontWeight: "800", color: "var(--color-primary-dark)", cursor: "pointer", textDecoration: "underline" }}
+                          onClick={() => {
+                            setSelectedFilter("healthy");
+                            setMobileCardIndex(0);
+                            window.scrollTo({ top: document.querySelector(".sample-gallery-section").offsetTop - 80, behavior: "smooth" });
+                          }}
+                        >
+                          🥤 {p.alternative}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Slider Navigation Bar */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", marginTop: "8px", padding: "0 4px" }}>
+                <button 
+                  className="gallery-nav-btn"
+                  onClick={() => setMobileCardIndex(prev => (prev - 1 + filteredProducts.length) % filteredProducts.length)}
+                  style={{ flex: 1, padding: "12px 18px", borderRadius: "30px", border: "1px solid var(--color-border-secondary)", background: "var(--color-background-secondary)", color: "var(--color-text-primary)", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "all 0.2s" }}
+                >
+                  ← Previous
+                </button>
+                <span style={{ fontSize: "14px", fontWeight: "800", color: "var(--color-text-secondary)", minWidth: "50px", textAlign: "center" }}>
+                  {mobileCardIndex + 1} / {filteredProducts.length}
+                </span>
+                <button 
+                  className="gallery-nav-btn btn-primary"
+                  onClick={() => setMobileCardIndex(prev => (prev + 1) % filteredProducts.length)}
+                  style={{ flex: 1, padding: "12px 18px", borderRadius: "30px", border: "none", background: "var(--color-primary)", color: "#ffffff", fontSize: "13px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", transition: "all 0.2s", boxShadow: "0 4px 12px rgba(22, 163, 74, 0.2)" }}
+                >
+                  Next →
+                </button>
+              </div>
             </div>
-          ))}
+          )}
         </div>
       </section>
 

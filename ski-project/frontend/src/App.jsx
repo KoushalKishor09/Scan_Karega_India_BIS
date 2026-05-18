@@ -64,8 +64,6 @@ export default function App() {
         if (res.ok) {
           const profileData = await res.json();
           setUser(profileData);
-          // Auto-route to dashboard upon successful session recovery
-          setActiveView("dashboard");
         } else {
           // Token expired or invalid, clear it
           handleLogout();
