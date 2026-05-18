@@ -15,9 +15,42 @@ export default function App() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   
+  // Helper to load view state from url pathname on startup
+  const getInitialView = () => {
+    const path = window.location.pathname;
+    if (path === "/about") return "about";
+    if (path === "/dashboard" || path === "/scanner") return "dashboard";
+    return "home";
+  };
+
   // Theme & Routing View States
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [activeView, setActiveView] = useState("home");
+  const [activeView, setActiveView] = useState(getInitialView);
+
+  // Sync activeView state directly with URL pathname in address bar
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    let targetPath = "/";
+    if (activeView === "about") targetPath = "/about";
+    else if (activeView === "dashboard") targetPath = "/dashboard";
+
+    if (currentPath !== targetPath) {
+      window.history.pushState({}, "", targetPath);
+    }
+  }, [activeView]);
+
+  // Handle browser Back/Forward navigation clicks
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path === "/about") setActiveView("about");
+      else if (path === "/dashboard" || path === "/scanner") setActiveView("dashboard");
+      else setActiveView("home");
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // 1. Theme handler effect
   useEffect(() => {

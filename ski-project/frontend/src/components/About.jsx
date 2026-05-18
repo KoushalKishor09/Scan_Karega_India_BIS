@@ -7,10 +7,10 @@ export default function About({ onLoginClick, user }) {
       <section className="about-hero">
         <div className="hero-overlay-grid"></div>
         <div className="about-hero-content">
-          <span className="section-eyebrow">Our Vision</span>
-          <h1 className="about-hero-title">Empowering Every Indian with Dietary Transparency</h1>
+          <span className="section-eyebrow">Our Simple Mission</span>
+          <h1 className="about-hero-title">Know What You Eat. Choose Clean Food.</h1>
           <p className="about-hero-subtitle">
-            Under the national health initiative, Scan Karega India is committed to breaking down food labeling barriers and helping citizens choose safer, healthier, and locally sourced alternatives.
+            We help you read food labels easily. Scan any packaged food or drink to instantly find secret chemicals, sugar levels, and get healthier local Indian alternatives.
           </p>
         </div>
       </section>
@@ -21,11 +21,12 @@ export default function About({ onLoginClick, user }) {
           <div className="about-text-content">
             <h2 className="section-title">Why Scan Karega India Exists</h2>
             <p className="about-paragraph">
-              Modern processed food products frequently conceal sugars, trans fats, emulsifiers, and harmful chemical preservatives behind complex industry nomenclature. For the average consumer, making a healthy selection by analyzing micro-text labels is both exhausting and unrealistic.
+              Many packaged snacks hide high sugar, bad palm oil, and harmful chemical preservatives behind complicated names. Reading these tiny labels at the store is hard and confusing.
             </p>
             <p className="about-paragraph">
-              Our advanced AI scanning engine instantly parses food labels, translates chemical additives into plain language, assesses nutritional quality based on international and domestic standards, and offers direct Indian alternatives.
+              Scan Karega India makes it super simple! Our AI label scanner translates chemical additives into plain English, rates the food quality, and recommends clean local alternatives.
             </p>
+            
             <div className="about-highlights">
               <div className="highlight-item">
                 <div className="highlight-icon-wrapper">
@@ -35,8 +36,8 @@ export default function About({ onLoginClick, user }) {
                   </svg>
                 </div>
                 <div>
-                  <h4>100% Transparent</h4>
-                  <p>No sponsored rankings. We prioritize raw nutritional facts and consumer safety.</p>
+                  <h4>100% Honest & Free</h4>
+                  <p>No paid ads. We only show real nutrition facts for your family's safety.</p>
                 </div>
               </div>
               <div className="highlight-item">
@@ -48,21 +49,22 @@ export default function About({ onLoginClick, user }) {
                   </svg>
                 </div>
                 <div>
-                  <h4>BIS Standard Compliance</h4>
-                  <p>Evaluated using modern Bureau of Indian Standards food safety guidelines.</p>
+                  <h4>BIS Standards</h4>
+                  <p>We follow official Bureau of Indian Standards (BIS) rules to check food safety.</p>
                 </div>
               </div>
             </div>
           </div>
+          
           <div className="about-visual-side">
             <div className="glass-card about-stat-card animate-pulse-slow">
               <div className="stat-circle">
                 <span className="stat-number">SKI</span>
-                <span className="stat-label">Initiative</span>
+                <span className="stat-label">Clean Eat</span>
               </div>
               <div className="stat-card-details">
-                <h4>Healthier Alternatives</h4>
-                <p>We replace harmful high-sodium and chemical-laden snacks with organic, clean Indian substitutes.</p>
+                <h4>Traditional Alternatives</h4>
+                <p>We help you swap chemical-laden snacks with healthy, traditional Indian food options.</p>
               </div>
             </div>
           </div>
@@ -72,10 +74,10 @@ export default function About({ onLoginClick, user }) {
       {/* BIS Compliance Details Section */}
       <section className="section-padding bg-alt-about">
         <div className="section-header">
-          <span className="section-eyebrow">Standardization</span>
-          <h2 className="section-title">BIS Standard Awareness Portal</h2>
+          <span className="section-eyebrow">Health Safety</span>
+          <h2 className="section-title">How We Rate Your Food</h2>
           <p className="section-subtitle">
-            Promoting consumer health by maintaining high compliance standards for labeling, nutritional reporting, and ingredient authenticity.
+            We analyze packaged food ingredients using three simple checks to keep your health safe:
           </p>
         </div>
 
@@ -86,8 +88,8 @@ export default function About({ onLoginClick, user }) {
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
-            <h3>Certified Safe Additives</h3>
-            <p>We screen food items against FSSAI and BIS chemical additive limits to warn you of potential allergens or hyper-processing side effects.</p>
+            <h3>Chemical Check</h3>
+            <p>We screen ingredients against FSSAI & BIS limits to warn you about harmful food colors and preservatives.</p>
           </div>
 
           <div className="compliance-card glass-card">
@@ -97,8 +99,8 @@ export default function About({ onLoginClick, user }) {
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
               </svg>
             </div>
-            <h3>NOVA processing rating</h3>
-            <p>Our rating system highlights ultra-processed products (UPFs) which are linked to chronic metabolic issues.</p>
+            <h3>Processing Score</h3>
+            <p>We highlight ultra-processed foods (NOVA Group 4) so you can avoid high-risk industrial junk food.</p>
           </div>
 
           <div className="compliance-card glass-card">
@@ -108,8 +110,8 @@ export default function About({ onLoginClick, user }) {
                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
               </svg>
             </div>
-            <h3>Health Literacy Goal</h3>
-            <p>By empowering citizens with quick scan insights, we aim to pressure food manufacturers into producing cleaner snacks.</p>
+            <h3>Clean Swaps</h3>
+            <p>We give you clean local alternatives instantly so you can build better eating habits every day.</p>
           </div>
         </div>
       </section>
@@ -117,10 +119,10 @@ export default function About({ onLoginClick, user }) {
       {/* Team Kranti Dedication Section */}
       <section className="section-padding team-dedication-section">
         <div className="section-header">
-          <span className="section-eyebrow">The Team</span>
+          <span className="section-eyebrow">The Campaigners</span>
           <h2 className="section-title">Team Kranti</h2>
           <p className="section-subtitle">
-            A passionate collective of developers and campaigners driving the Healthy India movement forward.
+            A passionate group of developers and campaigners driving the Healthy India movement forward.
           </p>
         </div>
 
@@ -168,7 +170,7 @@ export default function About({ onLoginClick, user }) {
           {/* Card 3: Abhinav */}
           <div className="glass-card team-member-card">
             <div className="member-top-actions">
-              <span className="member-role-badge">Technical Coord</span>
+              <span className="member-role-badge">Technical Lead</span>
               <button className="member-chat-btn" aria-label="Message Abhinav">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -214,7 +216,7 @@ export default function About({ onLoginClick, user }) {
         <section className="about-cta-section section-padding">
           <div className="glass-card about-cta-card">
             <h3>Start Scanning Packaged Foods Today</h3>
-            <p>Create your private account to analyze ingredients, calculate healthy scores, and browse FSSAI alternative recommendations.</p>
+            <p>Create a free account to scan any label, calculate health scores, and get clean Indian alternatives.</p>
             <button className="btn-primary" onClick={onLoginClick}>Sign In to Start Scanning</button>
           </div>
         </section>
