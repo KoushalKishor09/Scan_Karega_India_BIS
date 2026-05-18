@@ -2,7 +2,7 @@
   "name": "scan-karega-india-workspace",
   "private": true,
   "scripts": {
-    "dev": "bash ./scripts/dev.sh",
+    "dev": "node ./scripts/dev.js",
     "verify:env": "cd ./ski-project/backend && . .venv/bin/activate && python3 -c \"from app.core.config import settings; print('GEMINI_API_KEY loaded:', bool(settings.GEMINI_API_KEY)); print('ALLOWED_ORIGINS:', settings.ALLOWED_ORIGINS)\""
   }
 }

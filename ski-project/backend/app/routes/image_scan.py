@@ -96,8 +96,8 @@ async def call_gemini_vision(image_b64: str, media_type: str) -> dict:
         },
     }
 
-    async with httpx.AsyncClient(timeout=30) as client:
-        res = await client.post(
+    with httpx.Client(timeout=30) as client:
+        res = client.post(
             GEMINI_API_URL,
             headers={
                 "x-goog-api-key": api_key,
