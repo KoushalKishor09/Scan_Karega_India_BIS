@@ -15,6 +15,9 @@ export default function About({ onLoginClick, user }) {
         </div>
       </section>
 
+
+{/* demo   */}
+
       {/* Core Mission Grid */}
       <section className="section-padding">
         <div className="about-grid">
