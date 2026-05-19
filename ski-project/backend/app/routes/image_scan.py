@@ -200,7 +200,7 @@ async def scan_image(
         "extraction_confidence": extracted.get("extraction_confidence", "medium"),
         "healthy_alternatives": extracted.get("healthy_alternatives", []),
         "notes": extracted.get("notes"),
-        "image_url": f"{settings.BACKEND_URL.rstrip('/')}/uploads/{unique_filename}" if settings.BACKEND_URL else f"{str(request.base_url).rstrip('/')}/uploads/{unique_filename}",
+        "image_url": f"data:{file.content_type};base64,{image_b64}",
         "scanned_at": datetime.utcnow()
     }
     

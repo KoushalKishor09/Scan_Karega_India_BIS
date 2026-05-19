@@ -21,17 +21,7 @@ export default function ChatWidget() {
     }
   }, [chatMessages, isTyping, chatOpen]);
 
-  // Handle body scroll locking on mobile screens when chat is open
-  useEffect(() => {
-    if (chatOpen && window.innerWidth <= 576) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [chatOpen]);
+
 
   const handleSuggestionClick = (query) => {
     submitUserMessage(query);
@@ -90,8 +80,7 @@ export default function ChatWidget() {
 
   return (
     <div className={`ai-chat-widget ${chatOpen ? "chat-open" : ""}`}>
-      {/* Chat Toggle Button (Hidden on Mobile when Chat is Open to clean up the screen) */}
-      {(!chatOpen || window.innerWidth > 576) && (
+      {!chatOpen && (
         <button
           className="ai-chat-toggle-btn"
           onClick={() => setChatOpen(!chatOpen)}
