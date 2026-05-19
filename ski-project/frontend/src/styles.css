@@ -3531,6 +3531,10 @@ body {
   50% { transform: translateY(-4px); opacity: 1; }
 }
 
+.chat-backdrop {
+  display: none;
+}
+
 /* ── FLOATING AI CHAT WIDGET ── */
 .ai-chat-widget {
   position: fixed;
@@ -3817,6 +3821,19 @@ body {
 
 /* RESPONSIVE RESPONSIVENESS OVERRIDES */
 @media (max-width: 576px) {
+  .chat-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 32, 67, 0.5); /* Premium soft translucent deep blue overlay */
+    backdrop-filter: blur(4px); /* Premium background blur to highlight active chat popup */
+    z-index: 99999; /* Below the chat window which is 100000 */
+    animation: fade-in 0.25s ease-out;
+  }
+
   .ai-chat-widget {
     bottom: 35px; /* Safely raised from 20px to prevent bottom-edge viewport clipping */
     right: 20px;

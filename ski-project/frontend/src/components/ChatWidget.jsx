@@ -80,6 +80,11 @@ export default function ChatWidget() {
 
   return (
     <div className={`ai-chat-widget ${chatOpen ? "chat-open" : ""}`}>
+      {/* Mobile-only background backdrop overlay */}
+      {chatOpen && (
+        <div className="chat-backdrop" onClick={() => setChatOpen(false)} />
+      )}
+
       {!chatOpen && (
         <button
           className="ai-chat-toggle-btn"
