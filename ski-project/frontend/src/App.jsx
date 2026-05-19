@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import Home from "./components/Home";
 import About from "./components/About";
 import Dashboard from "./components/Dashboard";
+import ChatWidget from "./components/ChatWidget";
 import logoImg from "./assets/logo.png";
 import "./styles.css";
 
@@ -183,6 +184,9 @@ export default function App() {
           </div>
         </div>
       )}
+      
+      {/* Global responsive AI Chat Widget */}
+      <ChatWidget />
     </div>
   );
 }
