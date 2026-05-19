@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ImageUpload from "./ImageUpload/ImageUpload";
 
-export default function Dashboard({ user, token, API_URL, onUserUpdate }) {
+export default function Dashboard({ user, token, API_URL, onUserUpdate, onLogout }) {
   const [activeTab, setActiveTab] = useState("scan"); // "scan" | "history"
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -114,6 +114,42 @@ export default function Dashboard({ user, token, API_URL, onUserUpdate }) {
       }
     } catch (err) {
       console.error("Error updating profile:", err);
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "⚠️ WARNING: Are you absolutely sure you want to delete your account?\n\nThis will permanently delete all your scanned food profiles, historical records, and personal health metrics. This action CANNOT be undone."
+    );
+    if (!confirmDelete) return;
+
+    setUpdateLoading(true);
+    setSuccessMsg("");
+    try {
+      const res = await fetch(`${API_URL}/api/auth/me/delete`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        setSuccessMsg("Account deleted. Good bye! 👋");
+        setTimeout(() => {
+          setIsEditing(false);
+          if (onLogout) {
+            onLogout();
+          }
+        }, 2000);
+      } else {
+        const errData = await res.json().catch(() => ({ detail: "Deletion failed" }));
+        alert(`Error deleting account: ${errData.detail || "Server error"}`);
+      }
+    } catch (err) {
+      console.error("Account deletion error:", err);
+      alert("Failed to delete account. Please try again later.");
     } finally {
       setUpdateLoading(false);
     }
@@ -518,12 +554,41 @@ export default function Dashboard({ user, token, API_URL, onUserUpdate }) {
                 </div>
               )}
 
-              <div className="form-actions-row full-width">
-                <button type="submit" className="btn-save-profile" disabled={updateLoading}>
-                  {updateLoading ? "Saving..." : "Save Changes"}
-                </button>
-                <button type="button" className="btn-cancel-profile" onClick={() => setIsEditing(false)}>
-                  Cancel
+              <div className="form-actions-row full-width" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button type="submit" className="btn-save-profile" disabled={updateLoading}>
+                    {updateLoading ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button type="button" className="btn-cancel-profile" onClick={() => setIsEditing(false)}>
+                    Cancel
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="btn-delete-account"
+                  onClick={handleDeleteAccount}
+                  style={{
+                    background: '#dc2626',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '10px 16px',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = '#b91c1c'}
+                  onMouseLeave={(e) => e.target.style.background = '#dc2626'}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  Delete Account
                 </button>
               </div>
             </form>

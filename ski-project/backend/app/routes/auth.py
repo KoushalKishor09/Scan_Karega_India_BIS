@@ -152,7 +152,7 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     """Fetch the authenticated user's details directly from MongoDB."""
     db_user = await users_collection.find_one({"email": current_user["email"]})
     if not db_user:
-        return current_user
+        raise HTTPException(status_code=401, detail="User account no longer exists")
     db_user["_id"] = str(db_user["_id"])
     return db_user
 
@@ -187,3 +187,18 @@ async def update_profile(profile: ProfileUpdate, current_user: dict = Depends(ge
         updated_user["_id"] = str(updated_user["_id"])
         return updated_user
     return {"status": "success"}
+
+
+@router.delete("/me/delete")
+async def delete_account(current_user: dict = Depends(get_current_user)):
+    """Delete user account and all linked scan history in MongoDB."""
+    from app.core.db import scans_collection
+    email = current_user["email"]
+    
+    # 1. Delete all scan history associated with this email
+    await scans_collection.delete_many({"user_email": email})
+    
+    # 2. Delete the user document itself from MongoDB
+    await users_collection.delete_one({"email": email})
+    
+    return {"status": "success", "message": "Account and scan history permanently deleted."}

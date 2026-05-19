@@ -148,7 +148,13 @@ export default function App() {
         ) : activeView === "about" ? (
           <About onLoginClick={handleLoginClick} user={user} />
         ) : activeView === "dashboard" && user ? (
-          <Dashboard user={user} token={token} API_URL={API_URL} onUserUpdate={(updatedUser) => setUser(updatedUser)} />
+          <Dashboard
+            user={user}
+            token={token}
+            API_URL={API_URL}
+            onUserUpdate={(updatedUser) => setUser(updatedUser)}
+            onLogout={handleLogout}
+          />
         ) : (
           <Home onLoginClick={handleLoginClick} user={user} onScanClick={() => setActiveView("dashboard")} />
         )}
