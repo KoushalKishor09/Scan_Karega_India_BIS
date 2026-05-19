@@ -100,7 +100,15 @@ export default function Home({ onLoginClick, user, onScanClick }) {
     <div className="home-container">
       {/* Hero Section */}
       <header className="hero-section">
-        <div className="hero-content animate-slide-up">
+        {/* Decorative Premium Background Orbs */}
+        <div className="hero-orb orb-1"></div>
+        <div className="hero-orb orb-2"></div>
+
+        <div className="hero-content animate-slide-up" style={{ zIndex: 1 }}>
+          <div className="hero-badge">
+            <span className="eyebrow-badge-pulse"></span>
+            ⚡ AI-Powered Food Label Scanner
+          </div>
           <h1 className="hero-title">
             Know What You Eat.<br />
             Instant <span className="text-gradient">Food Label Scans</span>.
@@ -119,7 +127,7 @@ export default function Home({ onLoginClick, user, onScanClick }) {
         </div>
 
         {/* Breathtaking Interactive Live Scanner Simulator */}
-        <div className="hero-teaser-wrapper animate-fade-in">
+        <div className="hero-teaser-wrapper animate-fade-in" style={{ zIndex: 1 }}>
           <div className="simulator-container glass-card">
             {/* Simulator Header & Switcher */}
             <div className="simulator-header">
