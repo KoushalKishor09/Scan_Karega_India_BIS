@@ -326,19 +326,40 @@ export default function Home({ onLoginClick, user, onScanClick }) {
             className={`gallery-filter-btn ${selectedFilter === "all" ? "active" : ""}`}
             onClick={() => { setSelectedFilter("all"); setMobileCardIndex(0); }}
           >
-            All Products
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+              All Products
+            </span>
           </button>
           <button 
             className={`gallery-filter-btn ${selectedFilter === "unhealthy" ? "active-danger" : ""}`}
             onClick={() => { setSelectedFilter("unhealthy"); setMobileCardIndex(0); }}
           >
-            ⚠️ High Chemical (Avoid)
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              High Chemical (Avoid)
+            </span>
           </button>
           <button 
             className={`gallery-filter-btn ${selectedFilter === "healthy" ? "active-success" : ""}`}
             onClick={() => { setSelectedFilter("healthy"); setMobileCardIndex(0); }}
           >
-            ✅ Clean Alternatives (Choose)
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+              Clean Alternatives (Choose)
+            </span>
           </button>
         </div>
 
